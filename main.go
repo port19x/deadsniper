@@ -8,6 +8,7 @@ import (
 	"os"
 	"regexp"
 	"sync"
+	"time"
 )
 
 const helptext = "Usage: deadsniper <link to sitemap.xml>"
@@ -31,7 +32,10 @@ func reqWrap(url string) string {
 // This checks a list of links. It also expects the corresponding toplevel, to make fixing easier
 // This is an outside function to make it easily parallelizable
 func isLinkAlive(url string, toplevel string) string {
-	resp, err := http.Get(url)
+	client := http.Client{
+		Timeout: 5 * time.Second,
+	}
+	resp, err := client.Get(url)
 	if err != nil || resp.StatusCode != http.StatusOK {
 		if exitCode != 1 {
 			mutex.Lock() //Might be unneeded
