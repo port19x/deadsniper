@@ -10,13 +10,19 @@ For customization and a slower, but broader tool, use [DeadFinder](https://githu
 ## Usage
 
 ```
-deadsniper <link to sitemap.xml>
-```
+Usage: deadsniper [options] <link to sitemap.xml>
 
-For example
+Options:
+  -h | --help    print this help text
+  -V | --version print the version number
+  -s | --strict  allow only HTTP 200 response codes
+  -t | --timeout set the request timeout in seconds (default 5)
 
-```
-deadsniper https://port19.xyz/sitemap.xml
+Examples:
+  deadsniper https://port19.xyz/sitemap.xml
+  deadsniper -V
+  deadsniper --strict https://port19.xyz/sitemap.xml
+  deadsniper -t 1 -s https://port19.xyz/sitemap.xml
 ```
 
 ## Usage via Github Actions
