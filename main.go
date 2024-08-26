@@ -83,7 +83,7 @@ func main() {
 		return
 	}
 	if os.Args[1] == "-V" || os.Args[1] == "--version" {
-		fmt.Println("v1.2 - 20240826")
+		fmt.Println("v1.3 - 20240826")
 		return
 	}
 	if os.Args[1] == "-s" || os.Args[1] == "--strict" {
@@ -94,7 +94,7 @@ func main() {
 	}
 
 	// Parse all the requests from the sitemap file
-	re := regexp.MustCompile(`<loc>(https://.+?)</loc>`)
+	re := regexp.MustCompile(`<loc>(https?://.+?)</loc>`)
 	fat_result := re.FindAllStringSubmatch(body, -1)
 	var sites_in_sitemap []string
 	for _, matchSlice := range fat_result {
@@ -109,7 +109,7 @@ func main() {
 		// This takes a toplevel site and populates a list with the links on that site
 		// Parallelizing this toplevel processing does not help due to CPU and Network Limitations, I tried
 		body := reqWrap(toplevel) // Assumption: timeouts on the website being deadlink-checked do not occur
-		re := regexp.MustCompile(`"(https://.+?)"`)
+		re := regexp.MustCompile(`"(https?://.+?)"`)
 		matches := re.FindAllStringSubmatch(body, -1)
 		var links []string
 		for _, matchSlice := range matches {
