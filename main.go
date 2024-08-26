@@ -12,7 +12,19 @@ import (
 	"time"
 )
 
-const helptext = "Usage: deadsniper <link to sitemap.xml>" //TODO: document -s
+const helptext = `Usage: deadsniper [options] <link to sitemap.xml>
+
+Options:
+  -h | --help    print this help text
+  -V | --version print the version number
+  -s | --strict  allow only HTTP 200 response codes
+  -t | --timeout set the request timeout in seconds (default 5)
+
+Examples:
+  deadsniper https://port19.xyz/sitemap.xml
+  deadsniper -V
+  deadsniper --strict https://port19.xyz/sitemap.xml
+  deadsniper -t 1 -s https://port19.xyz/sitemap.xml`
 
 var allowedStatusCodes = []int{
 	http.StatusForbidden,       // Forbidden is very common. With or without a user agent
