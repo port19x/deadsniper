@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -20,6 +21,7 @@ var allowedStatusCodes = []int{
 	http.StatusAccepted,        // Accepted -> e.g. DuckDuckGo
 }
 var exitCode int = 0
+var timeout int = 5
 var mutex sync.Mutex
 var strict bool = false
 
@@ -57,10 +59,8 @@ func contains(slice []int, item int) bool {
 // This checks a list of links. It also expects the corresponding toplevel, to make fixing easier
 // This is an outside function to make it easily parallelizable
 func isLinkAlive(url string, toplevel string) string {
-	// If you think this timeout is excessive, go to https://www.gnu.org/software/gawk/manual/gawk.html
-	// I got 35 seconds with my browser. On the first try!
 	client := http.Client{
-		Timeout: time.Minute,
+		Timeout: time.Duration(timeout) * time.Second,
 	}
 	resp, err := client.Get(url)
 	if err != nil {
@@ -76,19 +76,37 @@ func isLinkAlive(url string, toplevel string) string {
 	}
 }
 
+// Read man shift. This function kinda reimplements that posix shell builtin
+func shift() {
+	os.Args = os.Args[1:]
+}
+
 func main() {
 	var body string
+	// I swear, one more argument and I'll use the flag module
 	if len(os.Args) < 2 || os.Args[1] == "-h" || os.Args[1] == "--help" {
 		fmt.Println(helptext)
 		return
 	}
 	if os.Args[1] == "-V" || os.Args[1] == "--version" {
-		fmt.Println("v1.3 - 20240826")
+		fmt.Println("v1.4 - 20240826")
 		return
 	}
+	// Sorry Dijkstra
+harmful:
 	if os.Args[1] == "-s" || os.Args[1] == "--strict" {
 		strict = true
-		body = reqWrap(os.Args[2]) // Assumption: timeouts on the website being deadlink-checked do not occur
+		shift()
+		goto harmful
+	} else if os.Args[1] == "-t" || os.Args[1] == "--timeout" {
+		var err error
+		timeout, err = strconv.Atoi(os.Args[2])
+		if err != nil {
+			log.Fatalf("timeout needs to be an integer", err)
+		}
+		shift()
+		shift()
+		goto harmful
 	} else {
 		body = reqWrap(os.Args[1]) // Assumption: timeouts on the website being deadlink-checked do not occur
 	}
