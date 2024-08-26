@@ -1,0 +1,10 @@
+name: "Deadsniper"
+description: "A fast, specialized dead-link checker"
+branding:
+  icon: "skull"
+  color: "red"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.sitemap }}
