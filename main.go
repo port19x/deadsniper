@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-const helptext = "Usage: deadsniper <link to sitemap.xml>" //TODO: document -s, if I keep it that is
+const helptext = "Usage: deadsniper <link to sitemap.xml>" //TODO: document -s
 
 var allowedStatusCodes = []int{
 	http.StatusForbidden,       // Forbidden is very common. With or without a user agent
@@ -83,10 +83,9 @@ func main() {
 		return
 	}
 	if os.Args[1] == "-V" || os.Args[1] == "--version" {
-		fmt.Println("v1.1 - 20240823") // TODO sleep over -s, then bump the version
+		fmt.Println("v1.2 - 20240826")
 		return
 	}
-	// TODO Experimental: I might drastically change or even remove this feature
 	if os.Args[1] == "-s" || os.Args[1] == "--strict" {
 		strict = true
 		body = reqWrap(os.Args[2]) // Assumption: timeouts on the website being deadlink-checked do not occur
